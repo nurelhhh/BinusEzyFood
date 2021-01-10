@@ -28,6 +28,8 @@ public class ItemDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+        setTitle(intent.getStringExtra("NAME") + " Detail");
+
         itemId = intent.getIntExtra("ID", -1);
 
         ImageView imageView = findViewById(R.id.imageDetail);
@@ -39,22 +41,18 @@ public class ItemDetailActivity extends AppCompatActivity {
         imageView.setImageResource(intent.getIntExtra("IMAGE", -1));
         nameText.setText(intent.getStringExtra("NAME"));
 
-        SQLiteOpenHelper dbHelper = new DBHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        Cursor cursor = db.query("ITEM_STOCKS", new String[]{"ITEM_ID", "STOCK"}, "ITEM_ID = ? AND REST_ID = ?", new String[]{String.valueOf(itemId), String.valueOf(MainActivity.REST_ID)}, null, null, null, null);
+        Cursor cursor = Utils.getDb(this).query("ITEM_STOCKS", new String[]{"ITEM_ID", "STOCK"}, "ITEM_ID = ? AND REST_ID = ?", new String[]{String.valueOf(itemId), String.valueOf(MainActivity.REST_ID)}, null, null, null, null);
 
         if (cursor.moveToFirst()) {
             itemStock = cursor.getInt(1);
         }
 
         cursor.close();
-        db.close();
 
         stockText.setText("Stock: " + itemStock);
 
         itemPrice = intent.getIntExtra("PRICE", -1);
-        priceText.setText(String.valueOf(itemPrice));
+        priceText.setText(Utils.toRupiah(itemPrice));
         quantityText.setText(String.valueOf(currentQty));
     }
 

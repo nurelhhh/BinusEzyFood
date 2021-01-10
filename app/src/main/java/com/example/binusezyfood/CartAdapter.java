@@ -2,8 +2,6 @@ package com.example.binusezyfood;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -43,35 +41,26 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
         String priceQty = "";
 
-        SQLiteOpenHelper dbHelper = new DBHelper(layout.getContext());
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query("ITEMS", new String[] {"NAME", "PRICE", "IMAGE"}, "_id = ?", new String[] {String.valueOf(itemCarts.get(position).getItem_id())}, null, null, null, null);
+        Cursor cursor = Utils.getDb(layout.getContext()).query("ITEMS", new String[] {"NAME", "PRICE", "IMAGE"}, "_id = ?", new String[] {String.valueOf(itemCarts.get(position).getItem_id())}, null, null, null, null);
 
         if (cursor.moveToFirst()) {
             holder.nameText.setText(cursor.getString(0));
-            priceQty += cursor.getInt(1);
+            priceQty += Utils.toRupiah(cursor.getInt(1));
             holder.imageView.setImageResource(cursor.getInt(2));
         }
 
         cursor.close();
-        db.close();
 
         priceQty += " x " + itemCarts.get(position).getQuantity();
         holder.priceQtyText.setText(priceQty);
 
-        holder.subtotalPriceText.setText(String.valueOf(itemCarts.get(position).getSubtotal_price()));
+        holder.subtotalPriceText.setText(Utils.toRupiah(itemCarts.get(position).getSubtotal_price()));
         holder.removeBtn.setOnClickListener(v -> {
-            SQLiteOpenHelper dbHelper1 = new DBHelper(layout.getContext());
-            SQLiteDatabase db1 = dbHelper1.getReadableDatabase();
-
-            db1.delete("CARTS", "_id = ?", new String[] {String.valueOf(itemCarts.get(position).getId())});
+            Utils.getDb(layout.getContext()).delete("CARTS", "_id = ?", new String[] {String.valueOf(itemCarts.get(position).getId())});
 
             ((Communicators) mContext).refreshTotalPrice(itemCarts.get(position).getSubtotal_price(), position);
 
             itemCarts.remove(position);
-
-            db1.close();
-
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, getItemCount()-position);
         });
@@ -101,9 +90,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             imageView = (ImageView) innerLayout1.getChildAt(0);
             removeBtn = (Button) innerLayout1.getChildAt(1);
 
-            nameText = (TextView) innerLayout2.getChildAt(0);
-            priceQtyText = (TextView) innerLayout2.getChildAt(1);
-            subtotalPriceText = (TextView) innerLayout2.getChildAt(2);
+            nameText = (TextView) innerLayout2.getChildAt(1);
+            priceQtyText = (TextView) innerLayout2.getChildAt(3);
+            subtotalPriceText = (TextView) innerLayout2.getChildAt(5);
         }
     }
 }

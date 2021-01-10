@@ -1,61 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:elevation="4dp"
+    android:layout_margin="8dp"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:alpha="0.4"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                tools:text="ID: 1" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginHorizontal="8dp"
+                tools:text="Rp120.000" />
 
         </LinearLayout>
 
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginVertical="8dp"
+            tools:text="2021/01/14 at 21:21:21" />
+
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="Receiver"
+            android:textSize="12sp" />
 
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
+            tools:text="JL. Semangka Raya" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:padding="4dp"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/transaction_item_recycler"
+                android:layout_marginVertical="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ordered From"
+                android:gravity="center"
+                android:textSize="12sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="16sp"
+                tools:text="EzyFood Karawaci" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="16sp"
+                tools:text="JL. Boulevard Diponegoro, Karawaci, Kota Tangerang" />
+
+        </LinearLayout>
+
+        <Button
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:layout_marginTop="4dp"
             android:text="Expand" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/transaction_item_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void onChangeAddress(View view) {
         addressSuggestions = getLocationFromAddress(getApplicationContext(), currentAddress[0]);
 
+        if (addressSuggestions == null) return;
+
         String[] addresses = new String[addressSuggestions.size()];
         for (int i=0; i<addressSuggestions.size(); i++) {
             addresses[i] = addressSuggestions.get(i).getAddressLine(0);
@@ -149,6 +151,30 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     public void setAddressFromCurrentLocation(View view) {
+
+        askLocationOn();
+
+        provider = locationManager.getBestProvider(criteria, false);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+
+            permissionDeniedBefore = true;
+
+            return;
+        }
+
+        Location location = locationManager.getLastKnownLocation(provider);
+        if (location != null) {
+            onLocationChanged(location);
+            setAddressCurrentNow();
+            isLocationOn = true;
+        }
+    }
+
+    private void setAddressCurrentNow() {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addresses;
 
@@ -163,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public List<Address> getLocationFromAddress(Context context, String strAddress) {
@@ -187,10 +212,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private Vector<ItemType> getItemTypes() {
         Vector<ItemType> itemTypes = new Vector<>();
 
-        SQLiteOpenHelper dbHelper = new DBHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        Cursor cursor = db.query("ITEM_TYPES", new String[]{"_id", "NAME", "IMAGE"}, null, null, null, null, null);
+        Cursor cursor = Utils.getDb(this).query("ITEM_TYPES", new String[]{"_id", "NAME", "IMAGE"}, null, null, null, null, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -202,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
 
         cursor.close();
-        db.close();
 
         return itemTypes;
     }
@@ -292,10 +313,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     private void getNearestRest() {
-        SQLiteOpenHelper dbHelper = new DBHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        Cursor cursor = db.query("RESTAURANTS", new String[]{"_id", "NAME", "ADDRESS", "LATITUDE", "LONGITUDE"}, null, null, null, null, null);
+        Cursor cursor = Utils.getDb(this).query("RESTAURANTS", new String[]{"_id", "NAME", "ADDRESS", "LATITUDE", "LONGITUDE"}, null, null, null, null, null);
 
         double nearestDistance = Double.MAX_VALUE;
         float[] checkDistance = new float[1];
@@ -315,7 +333,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
 
         cursor.close();
-        db.close();
     }
 
     public void onChangeRest(View view) {

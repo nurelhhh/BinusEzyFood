@@ -8,23 +8,22 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.binusezyfood.DataClasses.ItemCart;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Vector;
 
 public class CartActivity extends AppCompatActivity implements Communicators {
 
     private TextView balanceText;
+    private int userBalance;
     private TextView totalPriceText;
     private int totalPrice = 0;
     private Vector<ItemCart> itemCarts;
-    private SQLiteOpenHelper dbHelper;
     private SQLiteDatabase db;
 
     @Override
@@ -32,11 +31,12 @@ public class CartActivity extends AppCompatActivity implements Communicators {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        setTitle("Carts");
+
         balanceText = findViewById(R.id.cartBalanceText);
         totalPriceText = findViewById(R.id.cartTotalPriceText);
 
-        dbHelper = new DBHelper(this);
-        db = dbHelper.getReadableDatabase();
+        db = Utils.getDb(this);
 
         Cursor cursor = db.query("CARTS", new String[]{"_id", "ITEM_ID", "QUANTITY", "SUBTOTAL_PRICE"}, null, null, null, null, null);
 
@@ -55,16 +55,11 @@ public class CartActivity extends AppCompatActivity implements Communicators {
             } while (cursor.moveToNext());
         }
 
-        cursor = db.query("USERS", new String[]{"_id", "BALANCE"}, "_id = ?", new String[]{"1"}, null, null, null);
-
-        if (cursor.moveToFirst()) {
-            balanceText.setText(String.valueOf(cursor.getInt(1)));
-        }
+        getUserBalance();
 
         cursor.close();
-        db.close();
-
-        totalPriceText.setText(String.valueOf(totalPrice));
+        
+        totalPriceText.setText(Utils.toRupiah(totalPrice));
 
         RecyclerView recyclerView = findViewById(R.id.cartRecycler);
         recyclerView.setHasFixedSize(false);
@@ -77,16 +72,39 @@ public class CartActivity extends AppCompatActivity implements Communicators {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        getUserBalance();
+    }
+
+    private void getUserBalance() {
+        Cursor cursor = db.query("USERS", new String[]{"_id", "BALANCE"}, "_id = ?", new String[]{"1"}, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            userBalance = cursor.getInt(1);
+            balanceText.setText(Utils.toRupiah(userBalance));
+        }
+
+        cursor.close();
+    }
+
+    @Override
     public void refreshTotalPrice(int subtractedPrice, int previousItemPosition) {
         totalPrice -= subtractedPrice;
-        totalPriceText.setText(String.valueOf(totalPrice));
-
-        Toast.makeText(this, "" + itemCarts.size(), Toast.LENGTH_SHORT).show();
+        totalPriceText.setText(Utils.toRupiah(totalPrice));
     }
 
     public void onPay(View view) {
-        db = dbHelper.getReadableDatabase();
-
+        
+        if (userBalance < totalPrice) {
+            Snackbar.make(view, "Your balance is less", Snackbar.LENGTH_SHORT)
+                    .setAction("Top Up", v -> {
+                        Intent intent = new Intent(this, TopUpActivity.class);
+                        startActivity(intent);
+                    }).show();
+            return;
+        }
+        
         ContentValues transValues = new ContentValues();
         transValues.put("REST_ID", MainActivity.REST_ID);
         transValues.put("USER_ID", 1);
@@ -102,11 +120,6 @@ public class CartActivity extends AppCompatActivity implements Communicators {
         }
         cursor.close();
 
-        if (transId == -1) {
-            Toast.makeText(this, "GA BISA", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         ContentValues itemTransactionValues = new ContentValues();
         for (ItemCart item: itemCarts) {
             itemTransactionValues.clear();
@@ -119,12 +132,10 @@ public class CartActivity extends AppCompatActivity implements Communicators {
 
         db.delete("CARTS", null, null);
 
-        int newBalance = Integer.parseInt(balanceText.getText().toString()) - totalPrice;
+        int newBalance = userBalance - totalPrice;
         itemTransactionValues.clear();
         itemTransactionValues.put("BALANCE", newBalance);
         db.update("USERS", itemTransactionValues, "_id = ?", new String[] {"1"});
-
-        db.close();
 
         Intent intent = new Intent(this, TransactionActivity.class);
         startActivity(intent);

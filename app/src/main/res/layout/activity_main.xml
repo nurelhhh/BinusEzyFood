@@ -12,8 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/restoran_yang_dipilih"
         app:layout_constraintBottom_toTopOf="@+id/restNameText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addressSelectText" />
 
@@ -22,6 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:layout_marginStart="8dp"
         android:onClick="onChangeRest"
         android:text="@string/ganti_btn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,13 +37,16 @@
         android:id="@+id/restNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="4dp"
         android:text="@string/rest_null"
         android:textSize="24sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@+id/button3"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -47,11 +54,13 @@
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:onClick="getLocation"
         android:text="@string/terdekat_btn"
         app:layout_constraintBottom_toTopOf="@+id/type_recycler"
         app:layout_constraintEnd_toStartOf="@+id/changeRestBtn"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restNameText" />
 
@@ -142,9 +151,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:maxLines="3"
-        android:text="AutoCompleteTextView"
         android:imeOptions="actionDone"
+        android:maxLines="3"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toStartOf="@+id/button12"
         app:layout_constraintHorizontal_bias="0.5"

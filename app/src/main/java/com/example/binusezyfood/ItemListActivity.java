@@ -5,10 +5,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.widget.TextView;
-
-import java.util.Arrays;
 
 public class ItemListActivity extends AppCompatActivity {
 
@@ -25,8 +23,13 @@ public class ItemListActivity extends AppCompatActivity {
         int[] prices = intent.getIntArrayExtra("PRICES");
         int[] images = intent.getIntArrayExtra("IMAGES");
 
-        TextView title = findViewById(R.id.itemListTitleText);
-        title.setText(Arrays.toString(names));
+        Cursor cursor = Utils.getDb(this).query("ITEM_TYPES", new String[]{"NAME"}, "_id = ?", new String[]{String.valueOf(type_ids[0])}, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            setTitle(cursor.getString(0));
+        }
+
+        cursor.close();
 
         RecyclerView recyclerView = findViewById(R.id.item_recycler);
         recyclerView.setHasFixedSize(true);

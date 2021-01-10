@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.card.MaterialCardView;
 
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
@@ -33,30 +36,28 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LinearLayout layout = (LinearLayout) LayoutInflater.from(parent.getContext())
+        MaterialCardView cardView = (MaterialCardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.transaction_layout, parent, false);
 
-        return new ViewHolder(layout);
+        return new ViewHolder(cardView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LinearLayout layout = holder.linearLayout;
-        holder.idText.setText(String.valueOf(ids[position]));
+        MaterialCardView layout = holder.cardView;
+        holder.idText.setText("ID: " + ids[position]);
         holder.dateText.setText(dates[position]);
-        holder.totalPriceText.setText(String.valueOf(total_prices[position]));
+        holder.totalPriceText.setText(Utils.toRupiah(total_prices[position]));
         holder.receiverAddressText.setText(receiver_addresses[position]);
 
-        SQLiteOpenHelper dbHelper = new DBHelper(layout.getContext());
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query("RESTAURANTS", new String[] {"NAME", "ADDRESS"}, "_id = ?", new String[] {String.valueOf(rest_ids[position])}, null, null, null, null);
+        Cursor cursor = Utils.getDb(layout.getContext()).query("RESTAURANTS", new String[] {"NAME", "ADDRESS"}, "_id = ?", new String[] {String.valueOf(rest_ids[position])}, null, null, null, null);
 
         if (cursor.moveToFirst()) {
             holder.restNameText.setText(cursor.getString(0));
             holder.restAddressText.setText(cursor.getString(1));
         }
 
-        cursor = db.query("ITEM_TRANSACTIONS", new String[] {"ITEM_ID", "SUBTOTAL_PRICE", "QUANTITY"}, "TRANSACTION_ID = ?", new String[] {String.valueOf(ids[position])}, null, null, null);
+        cursor = Utils.getDb(layout.getContext()).query("ITEM_TRANSACTIONS", new String[] {"ITEM_ID", "SUBTOTAL_PRICE", "QUANTITY"}, "TRANSACTION_ID = ?", new String[] {String.valueOf(ids[position])}, null, null, null);
 
         int len = cursor.getCount();
         int[] itemIds = new int[len];
@@ -74,7 +75,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         cursor.close();
-        db.close();
+
+        holder.detailBtn.setOnClickListener( v -> {
+            if (holder.detailLayout.getVisibility() == View.VISIBLE) {
+                holder.detailLayout.setVisibility(View.GONE);
+                holder.detailBtn.setText("EXPAND");
+            } else {
+                holder.detailLayout.setVisibility(View.VISIBLE);
+                holder.detailBtn.setText("COLLAPSE");
+            }
+        });
 
         RecyclerView recyclerView = holder.transItemRecycler;
         recyclerView.setHasFixedSize(true);
@@ -92,7 +102,8 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public LinearLayout linearLayout;
+        public MaterialCardView cardView;
+        public LinearLayout detailLayout;
         public TextView idText;
         public TextView totalPriceText;
         public TextView dateText;
@@ -102,23 +113,27 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         public TextView receiverAddressText;
         public RecyclerView transItemRecycler;
 
-        public ViewHolder(@NonNull LinearLayout layout) {
-            super(layout);
+        public ViewHolder(@NonNull MaterialCardView cardView) {
+            super(cardView);
 
-            linearLayout = layout;
-            LinearLayout innerLayout1 = (LinearLayout) layout.getChildAt(0);
-            LinearLayout innerLayout2 = (LinearLayout) layout.getChildAt(1);
+            this.cardView = cardView;
+            LinearLayout innerLayout1 = (LinearLayout) cardView.getChildAt(0);
+            LinearLayout innerInnerLayout1 = (LinearLayout) innerLayout1.getChildAt(0);
+            detailLayout = (LinearLayout) innerLayout1.getChildAt(4);
 
-            LinearLayout innerInnerLayout = (LinearLayout) innerLayout1.getChildAt(0);
-            idText = (TextView) innerInnerLayout.getChildAt(0);
-            dateText = (TextView) innerInnerLayout.getChildAt(1);
-            totalPriceText = (TextView) innerLayout1.getChildAt(1);
-            detailBtn = (Button) innerLayout1.getChildAt(2);
+            idText = (TextView) innerInnerLayout1.getChildAt(0);
+            totalPriceText = (TextView) innerInnerLayout1.getChildAt(1);
 
-            restNameText = (TextView) innerLayout2.getChildAt(0);
-            restAddressText = (TextView) innerLayout2.getChildAt(1);
-            receiverAddressText = (TextView) innerLayout2.getChildAt(2);
-            transItemRecycler = (RecyclerView) innerLayout2.getChildAt(3);
+            dateText = (TextView) innerLayout1.getChildAt(1);
+
+            receiverAddressText = (TextView) innerLayout1.getChildAt(3);
+
+            transItemRecycler = (RecyclerView) detailLayout.getChildAt(0);
+            restNameText = (TextView) detailLayout.getChildAt(2);
+            restAddressText = (TextView) detailLayout.getChildAt(3);
+
+            detailBtn = (Button) innerLayout1.getChildAt(5);
+
         }
     }
 }

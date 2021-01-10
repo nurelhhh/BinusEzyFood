@@ -49,9 +49,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        SQLiteOpenHelper dbHelper = new DBHelper(this);
         try {
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            SQLiteDatabase db = Utils.getDb(this);
             createMarkers(mMap, db);
             mMap.setOnInfoWindowClickListener(this);
         } catch (SQLException e) {
@@ -83,7 +82,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         cursor.close();
-        db.close();
 
         LatLngBounds.Builder builder = LatLngBounds.builder();
         for (LatLng latLng: latLngVector) {

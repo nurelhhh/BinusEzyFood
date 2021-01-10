@@ -36,22 +36,19 @@ public class TransactionItemAdapter extends RecyclerView.Adapter<TransactionItem
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         LinearLayout layout = holder.linearLayout;
 
-        SQLiteOpenHelper dbHelper = new DBHelper(layout.getContext());
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query("ITEMS", new String[]{"NAME", "PRICE"}, "_id = ?", new String[]{String.valueOf(itemIds[position])}, null, null, null);
+       Cursor cursor = Utils.getDb(layout.getContext()).query("ITEMS", new String[]{"NAME", "PRICE"}, "_id = ?", new String[]{String.valueOf(itemIds[position])}, null, null, null);
 
 
         String namePrice = String.valueOf(itemIds[position]);
         if (cursor.moveToFirst()) {
-            namePrice = cursor.getString(0) + " @ " + cursor.getInt(1);
+            namePrice = cursor.getString(0) + " @ " + Utils.toRupiah(cursor.getInt(1));
         }
         holder.namePriceText.setText(namePrice);
 
         cursor.close();
-        db.close();
 
-        holder.subtotalPriceText.setText(String.valueOf(subtotalPrices[position]));
-        holder.qtyText.setText(String.valueOf("x" + qtys[position]));
+        holder.subtotalPriceText.setText(Utils.toRupiah(subtotalPrices[position]));
+        holder.qtyText.setText("x" + qtys[position]);
 
     }
 

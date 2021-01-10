@@ -10,5 +10,9 @@
     <string name="rest_null">-</string>
     <string name="terdekat_btn">Nearest</string>
     <string name="restoran_yang_dipilih">Selected restaurant:</string>
+    <string name="decrement_symbol">-</string>
+    <string name="increment_symbol">+</string>
+    <string name="balance_label">Balance</string>
+    <string name="total_price_label">Total Price</string>
 
 </resources>

@@ -1,59 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".CartActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cartRecycler"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cartTotalPriceText" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/cartTotalPriceText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:textSize="18sp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/cartRecycler"
-        app:layout_constraintEnd_toStartOf="@+id/button"
-        app:layout_constraintHorizontal_bias="0.02"
-        app:layout_constraintStart_toStartOf="@+id/cartBalanceText"
-        app:layout_constraintTop_toBottomOf="@+id/cartBalanceText" />
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:elevation="8dp">
 
-    <TextView
-        android:id="@+id/cartBalanceText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:textSize="18sp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toTopOf="@+id/cartTotalPriceText"
-        app:layout_constraintEnd_toStartOf="@+id/button"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="12dp">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="onPay"
-        android:text="Pay"
-        app:layout_constraintBottom_toBottomOf="@+id/cartTotalPriceText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/cartBalanceText"
-        app:layout_constraintVertical_bias="0.0" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/balance_label"
+                        android:textSize="12sp"
+                        tools:layout_editor_absoluteX="168dp"
+                        tools:layout_editor_absoluteY="21dp" />
+
+                    <TextView
+                        android:id="@+id/cartBalanceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        app:layout_constrainedWidth="true"
+                        tools:layout_editor_absoluteX="168dp"
+                        tools:layout_editor_absoluteY="40dp"
+                        tools:text="Rp69.000" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/total_price_label"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/cartTotalPriceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        app:layout_constrainedWidth="true"
+                        tools:layout_editor_absoluteX="16dp"
+                        tools:layout_editor_absoluteY="29dp"
+                        tools:text="Rp63.000" />
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:onClick="onPay"
+                    android:text="Pay" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cartRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

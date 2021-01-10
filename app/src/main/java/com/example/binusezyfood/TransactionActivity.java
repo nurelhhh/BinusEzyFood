@@ -5,10 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.widget.TextView;
 
 public class TransactionActivity extends AppCompatActivity {
 
@@ -17,12 +14,9 @@ public class TransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
 
-        TextView titleText = findViewById(R.id.transaction_title_text);
-        titleText.setText("Your transaction history");
+        setTitle("Transaction History");
 
-        SQLiteOpenHelper dbHelper = new DBHelper(this);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("" +
+        Cursor cursor = Utils.getDb(this).rawQuery("" +
                 "SELECT _id, REST_ID, TOTAL_PRICE, DATE, RECEIVER_ADDRESS " +
                 "FROM TRANSACTIONS " +
                 "WHERE USER_ID = 1 " +
@@ -48,7 +42,6 @@ public class TransactionActivity extends AppCompatActivity {
         }
 
         cursor.close();
-        db.close();
 
         RecyclerView recyclerView = findViewById(R.id.transaction_recycler);
         recyclerView.setHasFixedSize(true);
