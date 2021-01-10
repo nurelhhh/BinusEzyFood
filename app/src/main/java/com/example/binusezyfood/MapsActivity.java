@@ -14,7 +14,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -86,20 +85,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cursor.close();
         db.close();
 
-
         LatLngBounds.Builder builder = LatLngBounds.builder();
         for (LatLng latLng: latLngVector) {
             builder.include(latLng);
         }
         LatLngBounds bounds = builder.build();
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 11));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 10));
     }
 
     private void userPositionMarker(GoogleMap mMap) {
         mMap.addMarker(
                 new MarkerOptions()
-                .position(new LatLng(MainActivity.CURRENT_LATITUDE, MainActivity.CURRENT_LONGITUDE))
+                .position(new LatLng(MainActivity.RECEIVER_LATITUDE, MainActivity.RECEIVER_LONGITUDE))
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.person_pin_small))
         );
 
@@ -111,7 +108,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         String[] data = marker.getTag().toString().split(",");
 
-        intent.putExtra("REST_ID", data[0]);
+        intent.putExtra("REST_ID", Integer.parseInt(data[0]));
         intent.putExtra("REST_NAME", data[1]);
         setResult(1, intent);
         finish();
